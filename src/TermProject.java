@@ -6,7 +6,21 @@ import java.util.*;
 import java.io.*;
 
 public class TermProject extends JFrame {
+	String fileName;
+	void compileMessage() {
+		if(E_file.exists()) {
+			JOptionPane.showMessageDialog(null, "컴파일 오류", "Compile Error",
+		JOptionPane.WARNING_MESSAGE);
+		}
+		else {
+			JOptionPane.showMessageDialog(null, "컴파일 완료", "Compile Successful",
+		JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+	
+	File E_file = new File("C:\\Temp\\Error_File.txt");
 	JTextArea ew = new JTextArea();
+	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	
 	class EPanel extends JPanel{
 		EPanel(){
@@ -38,15 +52,17 @@ public class TermProject extends JFrame {
 		JMenuItem[] menuItem = new JMenuItem [5];
 		String[] itemTitle = {"Open", "Close", "Save", "Save As", "Quit"};
 		JMenu runMenu = new JMenu("Run");
+		JMenuItem compile = new JMenuItem("Compile");
 		
 		MyActionListener listener = new MyActionListener();
+		compile.addActionListener(listener);
 		for(int i=0; i<menuItem.length; i++) {
 			menuItem[i] = new JMenuItem(itemTitle[i]);
 			menuItem[i].addActionListener(listener);
 			fileMenu.add(menuItem[i]);
 		}
 		
-		runMenu.add(new JMenuItem("Compile"));
+		runMenu.add(compile);
 		
 		mb.add(fileMenu);
 		mb.add(runMenu);
@@ -65,7 +81,6 @@ public class TermProject extends JFrame {
 		
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
-			String fileName = null;
 			switch(command) {
 				case "Open":
 					try {
@@ -78,11 +93,13 @@ public class TermProject extends JFrame {
 						BufferedReader br = new BufferedReader(new FileReader(javaFile));
 						ew.read(br, javaFile);
 						br.close();
+						
 					} catch(IOException err) {
 						String er = err.getMessage();
 						ew.append(er);
-					}
 						break;
+					}
+					return;
 				case "Close":
 					//Close Function
 					
@@ -95,8 +112,26 @@ public class TermProject extends JFrame {
 				case "Quit":
 					System.exit(0);
 					//Quit Function
-			
+				case "Compile":
+					String s = null;
+					try {
+						System.out.println(fileName);
+						Process oProcess = new ProcessBuilder("javac", fileName).start();
+						BufferedReader stdError = new BufferedReader(new InputStreamReader
+					(oProcess.getErrorStream()));
+						while ((s = stdError.readLine()) != null) {
+							BufferedWriter fw = new BufferedWriter(new FileWriter(E_file, true));
+							fw.write(s);
+							fw.write(LINE_SEPARATOR);
+							fw.flush();
+							fw.close();
+						}
+					} catch(IOException e1) {
+						System.out.println(e1);
+					}
+					compileMessage();
 			}
+		
 		}
 	}
 	
