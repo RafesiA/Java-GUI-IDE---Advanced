@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
+import javax.swing.filechooser.*;
 
 public class TermProject extends JFrame {
 	public TermProject() {
@@ -18,13 +19,16 @@ public class TermProject extends JFrame {
 	private void createMenu() {
 		JMenuBar mb = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
+		JMenuItem[] menuItem = new JMenuItem [5];
+		String[] itemTitle = {"Open", "Close", "Save", "Save As", "Quit"};
 		JMenu runMenu = new JMenu("Run");
 		
-		fileMenu.add(new JMenuItem("Open"));
-		fileMenu.add(new JMenuItem("Close"));
-		fileMenu.add(new JMenuItem("Save"));
-		fileMenu.add(new JMenuItem("Save as"));
-		fileMenu.add(new JMenuItem("Quit"));
+		MyActionListener listener = new MyActionListener();
+		for(int i=0; i<menuItem.length; i++) {
+			menuItem[i] = new JMenuItem(itemTitle[i]);
+			menuItem[i].addActionListener(listener);
+			fileMenu.add(menuItem[i]);
+		}
 		
 		runMenu.add(new JMenuItem("Compile"));
 		
@@ -32,7 +36,29 @@ public class TermProject extends JFrame {
 		mb.add(runMenu);
 		
 		setJMenuBar(mb);
+	}
+	
+	class MyActionListener implements ActionListener{
+		private JFileChooser chooser;
 		
+		public MyActionListener(){
+			chooser = new JFileChooser();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("java File", "java");
+			chooser.setFileFilter(filter);
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			String command = e.getActionCommand();
+			switch(command) {
+				case "Open":
+					int ret = chooser.showOpenDialog(null);
+					if(ret != JFileChooser.APPROVE_OPTION) {
+						JOptionPane.showMessageDialog(null, "파일은 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
+					}
+					return;
+			
+			}
+		}
 	}
 	
 	public static void main(String[] args) {
