@@ -53,12 +53,11 @@ public class TermProject extends JFrame {
 			switch(command) {
 				case "Open":
 					int ret = chooser.showOpenDialog(null);
-					fileName = chooser.getSelectedFile().getAbsolutePath();
-					System.out.println(fileName);
 					if(ret != JFileChooser.APPROVE_OPTION) {
 						JOptionPane.showMessageDialog(null, "파일은 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
-						
 					}
+					fileName = chooser.getSelectedFile().getAbsolutePath();
+					System.out.println(fileName);
 			
 			}
 		}
