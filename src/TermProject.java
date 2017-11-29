@@ -7,6 +7,7 @@ import java.io.*;
 
 public class TermProject extends JFrame {
 	String fileName;
+	
 	void compileMessage() {
 		if(E_file.exists()) {
 			JOptionPane.showMessageDialog(null, "컴파일 오류", "Compile Error",
@@ -17,6 +18,7 @@ public class TermProject extends JFrame {
 		JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
+	
 	
 	File E_file = new File("C:\\Temp\\Error_File.txt");
 	JTextArea ew = new JTextArea();
@@ -110,12 +112,12 @@ public class TermProject extends JFrame {
 					//Save As Function
 					
 				case "Quit":
+					E_file.delete();
 					System.exit(0);
 					//Quit Function
 				case "Compile":
 					String s = null;
 					try {
-						System.out.println(fileName);
 						Process oProcess = new ProcessBuilder("javac", fileName).start();
 						BufferedReader stdError = new BufferedReader(new InputStreamReader
 					(oProcess.getErrorStream()));
