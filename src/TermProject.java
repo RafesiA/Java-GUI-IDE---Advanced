@@ -8,7 +8,9 @@ public class TermProject extends JFrame {
 	JTextArea ja = new JTextArea(10,50);
 
 	String fileName;
-	
+
+	static int compileDisable = 1;
+
 	void compileMessage() {
 		if(E_file.exists()) {
 			JOptionPane.showMessageDialog(null, "컴파일 오류", "Compile Error",
@@ -30,10 +32,20 @@ public class TermProject extends JFrame {
 		public BPanel() {
 			ja.setEditable(false);
 			setVisible(true);
+
 			setSize(600,200);
 			setBackground(Color.LIGHT_GRAY);
 			add(ja,BorderLayout.CENTER);
 			add(new JScrollPane(ja));
+			setSize(10, 10);
+			setLayout(new BorderLayout());
+			ew.setSize(10, 10);
+			add(ew,BorderLayout.CENTER);
+			add(new JScrollPane(ew));
+			ew.addFocusListener(new MyActionListener());
+			ew.addKeyListener(new MyActionListener());
+			ew.requestFocus();
+
 		}
 	}
 	JTabbedPane createTabbedPane() {
@@ -77,8 +89,48 @@ public class TermProject extends JFrame {
 		setJMenuBar(mb);
 	}
 	
-	class MyActionListener implements ActionListener{
+	
+	class MyActionListener implements ActionListener, FocusListener, KeyListener{
 		private JFileChooser chooser;
+		boolean controlPressed, RPressed;
+		
+		public void keyPressed(KeyEvent k) {
+			switch(k.getKeyCode()) {
+			case KeyEvent.VK_CONTROL:
+				controlPressed = true;
+				
+			case 'R':
+				 RPressed = true;
+			}
+			
+		}
+		public void keyReleased(KeyEvent k) {
+			switch(k.getKeyCode()) {
+			case KeyEvent.VK_CONTROL:
+				controlPressed = false;
+				
+			case 'R':
+				RPressed = false;
+			}
+		}
+		@Override
+		public void keyTyped(KeyEvent k) {
+			if(controlPressed == true && RPressed == true) {
+				System.out.println("Ctrl + R");
+			}
+			
+		}
+		
+		public void focusGained(FocusEvent f) {
+			if(f.getSource() == ew) {
+				System.out.printf("Focus gained\n", f);
+			}
+		}
+		public void focusLost(FocusEvent f)	{
+			if(f.getSource() == ew) {
+				System.out.printf("Focus lost\n", f);
+			}
+		}
 		
 		public MyActionListener(){
 			chooser = new JFileChooser();
@@ -96,10 +148,26 @@ public class TermProject extends JFrame {
 					System.out.println(fileName);
 					if(ret != JFileChooser.APPROVE_OPTION) {
 						JOptionPane.showMessageDialog(null, "파일은 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
+
+					try {
+						int ret = chooser.showOpenDialog(null);
+						if(ret != JFileChooser.APPROVE_OPTION) {
+							JOptionPane.showMessageDialog(null, "파일은 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
+						}
+						fileName = chooser.getSelectedFile().getAbsolutePath();
+						File javaFile = new File(fileName);
+						BufferedReader br = new BufferedReader(new FileReader(javaFile));
+						ew.read(br, javaFile);
+						if(fileName != null) {
+							compileDisable = 0;
+						}
+						br.close();
+
 						
 					}
 
 					return;
+					
 				case "Close":
 					//Close Function
 					
@@ -115,6 +183,7 @@ public class TermProject extends JFrame {
 					//Quit Function
 				case "Compile":
 					String s = null;
+
 					try {
 						Process oProcess = new ProcessBuilder("javac", fileName).start();
 						BufferedReader stdError = new BufferedReader(new InputStreamReader
@@ -125,11 +194,27 @@ public class TermProject extends JFrame {
 							fw.write(LINE_SEPARATOR);
 							fw.flush();
 							fw.close();
+
+					if(compileDisable != 1) {
+						try {
+							Process oProcess = new ProcessBuilder("javac", fileName).start();
+							BufferedReader stdError = new BufferedReader(new InputStreamReader
+						(oProcess.getErrorStream()));
+							while ((s = stdError.readLine()) != null) {
+								BufferedWriter fw = new BufferedWriter(new FileWriter(E_file, true));
+								fw.write(s);
+								fw.write(LINE_SEPARATOR);
+								fw.flush();
+								fw.close();
+							}
+						} catch(IOException e1) {
+							System.out.println(e1);
+
 						}
-					} catch(IOException e1) {
-						System.out.println(e1);
+						compileMessage();
+					} else {
+						JOptionPane.showMessageDialog(null, "파일은 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
 					}
-					compileMessage();
 			}
 		}
 	}
