@@ -9,7 +9,7 @@ public class TermProject extends JFrame {
 	String fileName;
 	static int compileDisable = 1;
 	File E_file = new File("C:\\Temp\\Error_File.txt");
-	JTextArea ew = new JTextArea();
+	JTextArea ew = new JTextArea(18,50);
 	JTextArea ja = new JTextArea(10, 50);
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
@@ -30,28 +30,32 @@ public class TermProject extends JFrame {
             ja.setEditable(false);
             setVisible(true);
             setSize(600,200);
-            setBackground(Color.LIGHT_GRAY);
+            setBackground(Color.yellow);
             add(ja,BorderLayout.CENTER);
             add(new JScrollPane(ja));
-            setSize(10, 10);
-            setLayout(new BorderLayout());
-            ew.setSize(10, 10);
-            add(ew,BorderLayout.CENTER);
-            add(new JScrollPane(ew));
-            ew.addFocusListener(new MyActionListener());
-            ew.addKeyListener(new MyActionListener());
-            ew.requestFocus();
+
 
         }
     }
+	class EPanel extends JPanel{
+		public EPanel() {
+		
+			setVisible(true);
+			setSize(600,400);
+			setBackground(Color.LIGHT_GRAY);
+			add(ew,BorderLayout.CENTER);
+			add(new JScrollPane(ew));
+		}
+	}
     JTabbedPane createTabbedPane() {
         JTabbedPane pane = new JTabbedPane(JTabbedPane.TOP);
         return pane;
     }
 	
 	public TermProject() {
-		BPanel e = new BPanel();
-		e.setLocation(0, 10);
+		setResizable(false);
+		BPanel b = new BPanel();
+		EPanel e = new EPanel();
 		setTitle("Java IDE");
 		createMenu();
 		setSize(600,600);
@@ -60,7 +64,8 @@ public class TermProject extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Container c;
 		c = getContentPane();
-		c.add(e);
+		c.add(b,BorderLayout.SOUTH);
+		c.add(e,BorderLayout.CENTER);
 	}
 	private void createMenu() {
 		JMenuBar mb = new JMenuBar();
