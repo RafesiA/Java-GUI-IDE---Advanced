@@ -2,15 +2,18 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 import javax.swing.filechooser.*;
+import java.util.*;
+import java.io.*;
 
 public class TermProject extends JFrame {
-
-	JTextArea ja = new JTextArea(10,50);
-
 	String fileName;
-
 	static int compileDisable = 1;
+	File E_file = new File("C:\\Temp\\Error_File.txt");
+	JTextArea ew = new JTextArea();
+	JTextArea ja = new JTextArea(10, 50);
+	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
+	
 	void compileMessage() {
 		if(E_file.exists()) {
 			JOptionPane.showMessageDialog(null, "컴파일 오류", "Compile Error",
@@ -21,39 +24,34 @@ public class TermProject extends JFrame {
 		JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
-	
-	
-	File E_file = new File("C:\\Temp\\Error_File.txt");
-	JTextArea ew = new JTextArea();
-	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-
-	
+		
 	class BPanel extends JPanel{
-		public BPanel() {
-			ja.setEditable(false);
-			setVisible(true);
+        public BPanel() {
+            ja.setEditable(false);
+            setVisible(true);
+            setSize(600,200);
+            setBackground(Color.LIGHT_GRAY);
+            add(ja,BorderLayout.CENTER);
+            add(new JScrollPane(ja));
+            setSize(10, 10);
+            setLayout(new BorderLayout());
+            ew.setSize(10, 10);
+            add(ew,BorderLayout.CENTER);
+            add(new JScrollPane(ew));
+            ew.addFocusListener(new MyActionListener());
+            ew.addKeyListener(new MyActionListener());
+            ew.requestFocus();
 
-			setSize(600,200);
-			setBackground(Color.LIGHT_GRAY);
-			add(ja,BorderLayout.CENTER);
-			add(new JScrollPane(ja));
-			setSize(10, 10);
-			setLayout(new BorderLayout());
-			ew.setSize(10, 10);
-			add(ew,BorderLayout.CENTER);
-			add(new JScrollPane(ew));
-			ew.addFocusListener(new MyActionListener());
-			ew.addKeyListener(new MyActionListener());
-			ew.requestFocus();
-
-		}
-	}
-	JTabbedPane createTabbedPane() {
-		JTabbedPane pane = new JTabbedPane(JTabbedPane.TOP);
-		return pane;
-	}
+        }
+    }
+    JTabbedPane createTabbedPane() {
+        JTabbedPane pane = new JTabbedPane(JTabbedPane.TOP);
+        return pane;
+    }
+	
 	public TermProject() {
-		BPanel b = new BPanel();
+		BPanel e = new BPanel();
+		e.setLocation(0, 10);
 		setTitle("Java IDE");
 		createMenu();
 		setSize(600,600);
@@ -62,10 +60,7 @@ public class TermProject extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Container c;
 		c = getContentPane();
-		JTextArea ew = new JTextArea();
-		c.add(ew, BorderLayout.CENTER);
-		c.add(b, BorderLayout.SOUTH);
-		setResizable(false);
+		c.add(e);
 	}
 	private void createMenu() {
 		JMenuBar mb = new JMenuBar();
@@ -73,15 +68,17 @@ public class TermProject extends JFrame {
 		JMenuItem[] menuItem = new JMenuItem [5];
 		String[] itemTitle = {"Open", "Close", "Save", "Save As", "Quit"};
 		JMenu runMenu = new JMenu("Run");
+		JMenuItem compile = new JMenuItem("Compile");
 		
 		MyActionListener listener = new MyActionListener();
+		compile.addActionListener(listener);
 		for(int i=0; i<menuItem.length; i++) {
 			menuItem[i] = new JMenuItem(itemTitle[i]);
 			menuItem[i].addActionListener(listener);
 			fileMenu.add(menuItem[i]);
 		}
 		
-		runMenu.add(new JMenuItem("Compile"));
+		runMenu.add(compile);
 		
 		mb.add(fileMenu);
 		mb.add(runMenu);
@@ -140,15 +137,8 @@ public class TermProject extends JFrame {
 		
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
-			String fileName = null;
 			switch(command) {
 				case "Open":
-					int ret = chooser.showOpenDialog(null);
-					fileName = chooser.getSelectedFile().getAbsolutePath();
-					System.out.println(fileName);
-					if(ret != JFileChooser.APPROVE_OPTION) {
-						JOptionPane.showMessageDialog(null, "파일은 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
-
 					try {
 						int ret = chooser.showOpenDialog(null);
 						if(ret != JFileChooser.APPROVE_OPTION) {
@@ -162,10 +152,12 @@ public class TermProject extends JFrame {
 							compileDisable = 0;
 						}
 						br.close();
-
 						
+					} catch(IOException err) {
+						String er = err.getMessage();
+						ew.append(er);
+						break;
 					}
-
 					return;
 					
 				case "Close":
@@ -183,18 +175,6 @@ public class TermProject extends JFrame {
 					//Quit Function
 				case "Compile":
 					String s = null;
-
-					try {
-						Process oProcess = new ProcessBuilder("javac", fileName).start();
-						BufferedReader stdError = new BufferedReader(new InputStreamReader
-					(oProcess.getErrorStream()));
-						while ((s = stdError.readLine()) != null) {
-							BufferedWriter fw = new BufferedWriter(new FileWriter(E_file, true));
-							fw.write(s);
-							fw.write(LINE_SEPARATOR);
-							fw.flush();
-							fw.close();
-
 					if(compileDisable != 1) {
 						try {
 							Process oProcess = new ProcessBuilder("javac", fileName).start();
@@ -209,13 +189,13 @@ public class TermProject extends JFrame {
 							}
 						} catch(IOException e1) {
 							System.out.println(e1);
-
 						}
 						compileMessage();
 					} else {
 						JOptionPane.showMessageDialog(null, "파일은 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
 					}
 			}
+		
 		}
 	}
 	
