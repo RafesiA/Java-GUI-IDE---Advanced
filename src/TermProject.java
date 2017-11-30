@@ -34,6 +34,8 @@ public class TermProject extends JFrame {
 			add(ew,BorderLayout.CENTER);
 			add(new JScrollPane(ew));
 			ew.addFocusListener(new MyActionListener());
+			ew.addKeyListener(new MyActionListener());
+			ew.requestFocus();
 		}
 	}
 	
@@ -74,8 +76,37 @@ public class TermProject extends JFrame {
 		setJMenuBar(mb);
 	}
 	
-	class MyActionListener implements ActionListener, FocusListener{
+	
+	class MyActionListener implements ActionListener, FocusListener, KeyListener{
 		private JFileChooser chooser;
+		boolean controlPressed, RPressed;
+		
+		public void keyPressed(KeyEvent k) {
+			switch(k.getKeyCode()) {
+			case KeyEvent.VK_CONTROL:
+				controlPressed = true;
+				
+			case 'R':
+				 RPressed = true;
+			}
+			
+		}
+		public void keyReleased(KeyEvent k) {
+			switch(k.getKeyCode()) {
+			case KeyEvent.VK_CONTROL:
+				controlPressed = false;
+				
+			case 'R':
+				RPressed = false;
+			}
+		}
+		@Override
+		public void keyTyped(KeyEvent k) {
+			if(controlPressed == true && RPressed == true) {
+				System.out.println("Ctrl + R");
+			}
+			
+		}
 		
 		public void focusGained(FocusEvent f) {
 			if(f.getSource() == ew) {
