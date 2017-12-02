@@ -6,6 +6,7 @@ import java.util.*;
 import java.io.*;
 
 public class TermProject extends JFrame {
+	String runFile;
 	String fileName;
 	static int compileDisable = 1;
 	File E_file = new File("C:\\Temp\\Error_File.txt");
@@ -34,12 +35,10 @@ public class TermProject extends JFrame {
             add(ja,BorderLayout.CENTER);
             add(new JScrollPane(ja));
 
-
         }
     }
 	class EPanel extends JPanel{
 		public EPanel() {
-		
 			setVisible(true);
 			setSize(600,400);
 			setBackground(Color.LIGHT_GRAY);
@@ -89,6 +88,10 @@ public class TermProject extends JFrame {
 		mb.add(runMenu);
 		
 		setJMenuBar(mb);
+		
+		ew.addFocusListener(listener);
+		ew.addKeyListener(listener);
+		ew.requestFocus();
 	}
 	
 	
@@ -96,32 +99,6 @@ public class TermProject extends JFrame {
 		private JFileChooser chooser;
 		boolean controlPressed, RPressed;
 		
-		public void keyPressed(KeyEvent k) {
-			switch(k.getKeyCode()) {
-			case KeyEvent.VK_CONTROL:
-				controlPressed = true;
-				
-			case 'R':
-				 RPressed = true;
-			}
-			
-		}
-		public void keyReleased(KeyEvent k) {
-			switch(k.getKeyCode()) {
-			case KeyEvent.VK_CONTROL:
-				controlPressed = false;
-				
-			case 'R':
-				RPressed = false;
-			}
-		}
-		@Override
-		public void keyTyped(KeyEvent k) {
-			if(controlPressed == true && RPressed == true) {
-				System.out.println("Ctrl + R");
-			}
-			
-		}
 		
 		public void focusGained(FocusEvent f) {
 			if(f.getSource() == ew) {
@@ -149,14 +126,17 @@ public class TermProject extends JFrame {
 						if(ret != JFileChooser.APPROVE_OPTION) {
 							JOptionPane.showMessageDialog(null, "파일은 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
 						}
-						fileName = chooser.getSelectedFile().getAbsolutePath();
-						File javaFile = new File(fileName);
-						BufferedReader br = new BufferedReader(new FileReader(javaFile));
-						ew.read(br, javaFile);
-						if(fileName != null) {
-							compileDisable = 0;
+						else {
+							fileName = chooser.getSelectedFile().getAbsolutePath();
+							File javaFile = new File(fileName);
+							BufferedReader br = new BufferedReader(new FileReader(javaFile));
+							ew.read(br, javaFile);
+							if(fileName != null) {
+								compileDisable = 0;
+							}
+							br.close();
 						}
-						br.close();
+						
 						
 					} catch(IOException err) {
 						String er = err.getMessage();
@@ -201,6 +181,44 @@ public class TermProject extends JFrame {
 					}
 			}
 		
+		}
+
+		public void keyPressed(KeyEvent k) {
+			switch(k.getKeyCode()) {
+			case KeyEvent.VK_CONTROL:
+				controlPressed = true;
+				
+			case 'R':
+				 RPressed = true;
+			}
+			
+		}
+		public void keyReleased(KeyEvent k) {
+			switch(k.getKeyCode()) {
+			case KeyEvent.VK_CONTROL:
+				controlPressed = false;
+				
+			case 'R':
+				RPressed = false;
+			}
+		}
+		public void keyTyped(KeyEvent k) {
+			File runJavaFile = new File(fileName);
+			String fileParent = runJavaFile.getParent();
+			String fileName = runJavaFile.getName();
+			int pos = fileName.lastIndexOf(".");
+			if(pos > 0) {
+				fileName = fileName.substring(0, pos);
+			}
+			if(controlPressed == true && RPressed == true) {
+				try {
+					System.out.println("Ctrl + R");
+					Process p = new ProcessBuilder("cmd", "/c", "cd", fileParent, "&&", "java", fileName).start();
+				} catch(IOException re) {
+					ja.append("ERROR");
+					System.out.println(re);
+				}
+			}
 		}
 	}
 	
