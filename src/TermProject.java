@@ -210,14 +210,42 @@ public class TermProject extends JFrame {
 			if(pos > 0) {
 				fileName = fileName.substring(0, pos);
 			}
-			if(controlPressed == true && RPressed == true) {
+			if(controlPressed == true && RPressed == true && !E_file.exists()) {
 				try {
+					String s;
 					System.out.println("Ctrl + R");
 					Process p = new ProcessBuilder("cmd", "/c", "cd", fileParent, "&&", "java", fileName).start();
+					BufferedReader stdOut = new BufferedReader(new InputStreamReader(p.getInputStream()));
+					BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+					
+					while((s = stdOut.readLine()) != null) {
+						ja.append(s);
+						ja.append("\n");
+					}
+					while((s = stdError.readLine()) != null) {
+						ja.append(s);
+						ja.append("\n");
+					}
 				} catch(IOException re) {
 					ja.append("ERROR");
 					System.out.println(re);
 				}
+			}
+			else if(controlPressed == true && RPressed == true && E_file.exists()) {
+				try {
+					FileReader reader = null;
+					BufferedReader br = new BufferedReader(new FileReader(E_file));
+					reader = new FileReader(E_file);
+					ja.read(br, E_file);
+					ja.append("\n");
+					reader.close();
+					br.close();
+				} catch(IOException e) {
+					ja.append("error");
+				}
+			}
+			else if(controlPressed == true && RPressed == true) {
+				ja.append("파일을 업로드해주세요.");
 			}
 		}
 	}
