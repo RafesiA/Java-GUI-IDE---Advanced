@@ -34,7 +34,6 @@ public class TermProject extends JFrame {
             setBackground(Color.yellow);
             add(ja,BorderLayout.CENTER);
             add(new JScrollPane(ja));
-
         }
     }
 	class EPanel extends JPanel{
@@ -135,20 +134,35 @@ public class TermProject extends JFrame {
 								compileDisable = 0;
 							}
 							br.close();
+							return;
 						}
-						
-						
 					} catch(IOException err) {
 						String er = err.getMessage();
 						ew.append(er);
 						break;
 					}
-					return;
 					
 				case "Close":
 					//Close Function
 					
 				case "Save":
+					if(fileName != null) {
+						try {
+							String overWrite = ew.getText();
+							PrintWriter pw = new PrintWriter(new File(fileName));
+							pw.print(overWrite);
+							pw.close();
+							ja.append("over write complete");
+							return;
+						} catch(IOException save) {
+							ja.append("Oveer Writing Error");
+							String saveError = save.getMessage();
+							ja.append(saveError);
+							return;
+						}
+					} else {
+						ja.append("fileName is null");
+					}
 					//Save Function
 					
 				case "Save As":
@@ -158,6 +172,7 @@ public class TermProject extends JFrame {
 					E_file.delete();
 					System.exit(0);
 					//Quit Function
+					
 				case "Compile":
 					String s = null;
 					if(compileDisable != 1) {
@@ -185,11 +200,10 @@ public class TermProject extends JFrame {
 
 		public void keyPressed(KeyEvent k) {
 			switch(k.getKeyCode()) {
-			case KeyEvent.VK_CONTROL:
-				controlPressed = true;
-				
-			case 'R':
-				 RPressed = true;
+				case KeyEvent.VK_CONTROL:
+					controlPressed = true;
+				case 'R':
+					RPressed = true;
 			}
 			
 		}
