@@ -186,6 +186,8 @@ public class TermProject extends JFrame {
 						System.exit(0);
 					} if(quitIDE == JOptionPane.NO_OPTION) {
 						return;
+					} if(quitIDE != JOptionPane.YES_NO_OPTION) {
+						return;
 					}
 					//Quit Function
 					
@@ -254,7 +256,6 @@ public class TermProject extends JFrame {
 				}
 				try {
 					String s;
-					System.out.println("Ctrl + R");
 					Process p = new ProcessBuilder("cmd", "/c", "cd", fileParent, "&&", "java", fileName).start();
 					BufferedReader stdOut = new BufferedReader(new InputStreamReader(p.getInputStream()));
 					BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
@@ -288,7 +289,6 @@ public class TermProject extends JFrame {
 				ja.append("파일을 업로드해주세요.\n");
 			}
 			else if(controlPressed == true && SPressed == true && RPressed != true) {
-				System.out.println("Ctrl + S");
 				save();
 			}
 		}
