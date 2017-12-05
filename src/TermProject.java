@@ -14,6 +14,27 @@ public class TermProject extends JFrame {
 	JTextArea ja = new JTextArea(10, 50);
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	
+	void save() {
+		if(fileName != null) {
+			try {
+				String overWrite = ew.getText();
+				PrintWriter pw = new PrintWriter(new File(fileName));
+				pw.print(overWrite);
+				pw.close();
+				ja.append("over write complete\n");
+				return;
+			} catch(IOException save) {
+				ja.append("Oveer Writing Error");
+				String saveError = save.getMessage();
+				ja.append(saveError);
+				return;
+			}
+		} else {
+			ja.append("fileName is null\n");
+		}
+	}
+	
+	
 	
 	void compileMessage() {
 		if(E_file.exists()) {
@@ -96,8 +117,8 @@ public class TermProject extends JFrame {
 	
 	class MyActionListener implements ActionListener, FocusListener, KeyListener{
 		private JFileChooser chooser;
-		boolean controlPressed, RPressed;
-		
+		boolean controlPressed, RPressed, SPressed;
+	
 		
 		public void focusGained(FocusEvent f) {
 			if(f.getSource() == ew) {
@@ -150,23 +171,7 @@ public class TermProject extends JFrame {
 					//Close Function
 					
 				case "Save":
-					if(fileName != null) {
-						try {
-							String overWrite = ew.getText();
-							PrintWriter pw = new PrintWriter(new File(fileName));
-							pw.print(overWrite);
-							pw.close();
-							ja.append("over write complete");
-							return;
-						} catch(IOException save) {
-							ja.append("Oveer Writing Error");
-							String saveError = save.getMessage();
-							ja.append(saveError);
-							return;
-						}
-					} else {
-						ja.append("fileName is null");
-					}
+					save();
 					//Save Function
 					
 				case "Save As":
@@ -216,8 +221,13 @@ public class TermProject extends JFrame {
 			switch(k.getKeyCode()) {
 				case KeyEvent.VK_CONTROL:
 					controlPressed = true;
+					return;
 				case 'R':
 					RPressed = true;
+					return;
+				case 'S':
+					SPressed = true;
+					return;
 			}
 			
 		}
@@ -228,24 +238,26 @@ public class TermProject extends JFrame {
 				
 			case 'R':
 				RPressed = false;
+			
+			case 'S':
+				SPressed = false;
 			}
 		}
 		public void keyTyped(KeyEvent k) {
-			File runJavaFile = new File(fileName);
-			String fileParent = runJavaFile.getParent();
-			String fileName = runJavaFile.getName();
-			int pos = fileName.lastIndexOf(".");
-			if(pos > 0) {
-				fileName = fileName.substring(0, pos);
-			}
-			if(controlPressed == true && RPressed == true && !E_file.exists()) {
+			if(controlPressed == true && RPressed == true && !E_file.exists() && fileName != null) {
+				File runJavaFile = new File(fileName);
+				String fileParent = runJavaFile.getParent();
+				String fileName = runJavaFile.getName();
+				int pos = fileName.lastIndexOf(".");
+				if(pos > 0) {
+					fileName = fileName.substring(0, pos);
+				}
 				try {
 					String s;
 					System.out.println("Ctrl + R");
 					Process p = new ProcessBuilder("cmd", "/c", "cd", fileParent, "&&", "java", fileName).start();
 					BufferedReader stdOut = new BufferedReader(new InputStreamReader(p.getInputStream()));
 					BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-					
 					while((s = stdOut.readLine()) != null) {
 						ja.append(s);
 						ja.append("\n");
@@ -273,10 +285,15 @@ public class TermProject extends JFrame {
 				}
 			}
 			else if(controlPressed == true && RPressed == true) {
-				ja.append("파일을 업로드해주세요.");
+				ja.append("파일을 업로드해주세요.\n");
+			}
+			else if(controlPressed == true && SPressed == true && RPressed != true) {
+				System.out.println("Ctrl + S");
+				save();
 			}
 		}
 	}
+	
 	
 	public static void main(String[] args) {
 		new TermProject();
