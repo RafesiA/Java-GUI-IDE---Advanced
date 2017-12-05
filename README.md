@@ -1,5 +1,7 @@
 # Java GUI IDE_ Advanced Project
-고급 Swing 컴포넌트를 활용한 Java GUI IDE입니다.
+고급 Swing 컴포넌트를 활용한 Java GUI IDE 프로젝트입니다.
+
+**경기대학교 컴퓨터과학과 자바프로그래밍2 TermProject - 3 과제이며, 본 프로그램에 대한 피드백은 언제나 환영합니다.**
 
 ## 전 GUI 프로젝트와 비교하여 바뀐 점
 
@@ -9,19 +11,19 @@
 ### 사용법
 
 #### File 메뉴에 있는 아이템 리스트
-**Open**
+**Open**\n
 다이얼로그로 IDE로 불러올 java 파일을 지정합니다.
 
-**Close**
+**Close**\n
 해당 java파일을 닫습니다.
 
-**Save**
+**Save**\n
 해당 java파일을 Overwrite된 상태로 저장합니다. __Ctrl + S키를 입력하여 저장할 수 있습니다.__
 
-**Save As**
+**Save As**\n
 기능 미구현
 
-**Quit**
+**Quit**\n
 IDE프로그램을 종료합니다.
 
 #### Run 메뉴에 있는 아이템 리스트
