@@ -13,7 +13,7 @@ public class TermProject extends JFrame {
 	JTextArea ew = new JTextArea(18,50);
 	JTextArea ja = new JTextArea(10, 50);
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-
+	
 	
 	void compileMessage() {
 		if(E_file.exists()) {
@@ -143,6 +143,10 @@ public class TermProject extends JFrame {
 					}
 					
 				case "Close":
+					fileName = null;
+					ew.setText("");
+					compileDisable = 1;
+					return;
 					//Close Function
 					
 				case "Save":
@@ -166,15 +170,25 @@ public class TermProject extends JFrame {
 					//Save Function
 					
 				case "Save As":
+					return;
 					//Save As Function
 					
 				case "Quit":
-					E_file.delete();
-					System.exit(0);
+					int quitIDE = JOptionPane.showConfirmDialog(null, "Java IDE를 종료합니까?",
+				"Are you sure?", JOptionPane.YES_NO_OPTION);
+					if(quitIDE == JOptionPane.YES_OPTION) {
+						E_file.delete();
+						System.exit(0);
+					} if(quitIDE == JOptionPane.NO_OPTION) {
+						return;
+					}
 					//Quit Function
 					
 				case "Compile":
 					String s = null;
+					if(E_file.exists()) {
+						E_file.delete();
+					}
 					if(compileDisable != 1) {
 						try {
 							Process oProcess = new ProcessBuilder("javac", fileName).start();
