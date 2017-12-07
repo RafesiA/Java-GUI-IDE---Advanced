@@ -35,6 +35,28 @@ public class TermProject extends JFrame {
 	}
 	
 	
+	void saveAs() {
+		JFileChooser fileChooser = new JFileChooser();
+		int retval = fileChooser.showSaveDialog(null);
+		if(retval == fileChooser.APPROVE_OPTION) {
+			File file = fileChooser.getSelectedFile();
+			if(!file.getName().toLowerCase().endsWith(".java")) {
+				file = new File(file.getParentFile(), file.getName() + ".java");
+			} else {
+				JOptionPane.showMessageDialog(null, "파일이 이미 존재합니다.", "Warning", JOptionPane.WARNING_MESSAGE);
+			}
+			try {
+				ew.write(new OutputStreamWriter(new FileOutputStream(file),
+			"utf-8"));
+				
+			} catch(IOException we) {
+				String we_error = we.getMessage();
+				ja.append(we_error);
+				
+			}
+		}
+		
+	}
 	
 	void compileMessage() {
 		if(E_file.exists()) {
@@ -117,7 +139,7 @@ public class TermProject extends JFrame {
 	
 	class MyActionListener implements ActionListener, FocusListener, KeyListener{
 		private JFileChooser chooser;
-		boolean controlPressed, RPressed, SPressed;
+		boolean controlPressed, RPressed, SPressed, shiftPressed;
 	
 		
 		public void focusGained(FocusEvent f) {
@@ -172,9 +194,11 @@ public class TermProject extends JFrame {
 					
 				case "Save":
 					save();
+					return;
 					//Save Function
 					
 				case "Save As":
+					saveAs();
 					return;
 					//Save As Function
 					
@@ -230,6 +254,9 @@ public class TermProject extends JFrame {
 				case 'S':
 					SPressed = true;
 					return;
+				case KeyEvent.VK_SHIFT:
+					shiftPressed = true;
+					return;
 			}
 			
 		}
@@ -240,9 +267,13 @@ public class TermProject extends JFrame {
 				
 			case 'R':
 				RPressed = false;
-			
+				
 			case 'S':
 				SPressed = false;
+				
+			case KeyEvent.VK_SHIFT:
+				shiftPressed = false;
+				
 			}
 		}
 		public void keyTyped(KeyEvent k) {
@@ -288,8 +319,12 @@ public class TermProject extends JFrame {
 			else if(controlPressed == true && RPressed == true) {
 				ja.append("파일을 업로드해주세요.\n");
 			}
-			else if(controlPressed == true && SPressed == true && RPressed != true) {
+			else if(controlPressed == true && SPressed == true && shiftPressed == false) {
 				save();
+			}
+			else if(controlPressed == true && shiftPressed == true && SPressed == true) {
+				saveAs();
+				shiftPressed = false;
 			}
 		}
 	}
