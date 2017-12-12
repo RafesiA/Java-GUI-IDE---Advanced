@@ -6,57 +6,15 @@ import java.util.*;
 import java.io.*;
 
 public class TermProject extends JFrame {
-	String runFile;
+	Container cp;
+	JTabbedPane pane;
 	String fileName;
 	static int compileDisable = 1;
 	File E_file = new File("C:\\Temp\\Error_File.txt");
 	JTextArea ew = new JTextArea(18,50);
 	JTextArea ja = new JTextArea(10, 50);
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-	
-	void save() {
-		if(fileName != null) {
-			try {
-				String overWrite = ew.getText();
-				PrintWriter pw = new PrintWriter(new File(fileName));
-				pw.print(overWrite);
-				pw.close();
-				ja.append("over write complete\n");
-				return;
-			} catch(IOException save) {
-				ja.append("Oveer Writing Error");
-				String saveError = save.getMessage();
-				ja.append(saveError);
-				return;
-			}
-		} else {
-			ja.append("fileName is null\n");
-		}
-	}
-	
-	
-	void saveAs() {
-		JFileChooser fileChooser = new JFileChooser();
-		int retval = fileChooser.showSaveDialog(null);
-		if(retval == fileChooser.APPROVE_OPTION) {
-			File file = fileChooser.getSelectedFile();
-			if(!file.getName().toLowerCase().endsWith(".java")) {
-				file = new File(file.getParentFile(), file.getName() + ".java");
-			} else {
-				JOptionPane.showMessageDialog(null, "파일이 이미 존재합니다.", "Warning", JOptionPane.WARNING_MESSAGE);
-			}
-			try {
-				ew.write(new OutputStreamWriter(new FileOutputStream(file),
-			"utf-8"));
-				
-			} catch(IOException we) {
-				String we_error = we.getMessage();
-				ja.append(we_error);
-				
-			}
-		}
-		
-	}
+
 	
 	void compileMessage() {
 		if(E_file.exists()) {
@@ -69,6 +27,19 @@ public class TermProject extends JFrame {
 		}
 	}
 		
+	public JTabbedPane createTabbedPane(){
+	    pane = new JTabbedPane(JTabbedPane.TOP);
+		return pane;
+	}
+	public JTabbedPane DefaultTabbedPane() {
+		pane.addTab("Default Tab", new MPanel());
+		return pane;
+	}
+	public JTabbedPane addTabbedPane(String str) {
+		pane.addTab(str, new MPanel());
+		return pane;
+	}
+	
 	class BPanel extends JPanel{
         public BPanel() {
             ja.setEditable(false);
@@ -77,10 +48,13 @@ public class TermProject extends JFrame {
             setBackground(Color.yellow);
             add(ja,BorderLayout.CENTER);
             add(new JScrollPane(ja));
+
+
         }
     }
 	class EPanel extends JPanel{
 		public EPanel() {
+		
 			setVisible(true);
 			setSize(600,400);
 			setBackground(Color.LIGHT_GRAY);
@@ -88,25 +62,37 @@ public class TermProject extends JFrame {
 			add(new JScrollPane(ew));
 		}
 	}
-    JTabbedPane createTabbedPane() {
-        JTabbedPane pane = new JTabbedPane(JTabbedPane.TOP);
-        return pane;
-    }
+	class MPanel extends JPanel{
+		
+		public MPanel() {
+			BPanel b = new BPanel();
+			EPanel e = new EPanel();
+			setSize(600,600);
+			setVisible(true);
+			
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			Container c;
+			c = getContentPane();
+		
+			c.add(b,BorderLayout.SOUTH);
+			c.add(e,BorderLayout.CENTER);
+		}
+	}
 	
 	public TermProject() {
-		setResizable(false);
-		BPanel b = new BPanel();
-		EPanel e = new EPanel();
+		
 		setTitle("Java IDE");
 		createMenu();
-		setSize(600,600);
+		setSize(600,655);
 		setVisible(true);
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Container c;
-		c = getContentPane();
-		c.add(b,BorderLayout.SOUTH);
-		c.add(e,BorderLayout.CENTER);
+		cp = getContentPane();
+		JTabbedPane pane = createTabbedPane();
+		cp.add(pane, BorderLayout.NORTH);
+		setResizable(true);
+		DefaultTabbedPane();
+				
 	}
 	private void createMenu() {
 		JMenuBar mb = new JMenuBar();
@@ -130,17 +116,39 @@ public class TermProject extends JFrame {
 		mb.add(runMenu);
 		
 		setJMenuBar(mb);
-		
-		ew.addFocusListener(listener);
-		ew.addKeyListener(listener);
-		ew.requestFocus();
 	}
 	
 	
 	class MyActionListener implements ActionListener, FocusListener, KeyListener{
 		private JFileChooser chooser;
-		boolean controlPressed, RPressed, SPressed, shiftPressed;
-	
+		boolean controlPressed, RPressed;
+		
+		public void keyPressed(KeyEvent k) {
+			switch(k.getKeyCode()) {
+			case KeyEvent.VK_CONTROL:
+				controlPressed = true;
+				
+			case 'R':
+				 RPressed = true;
+			}
+			
+		}
+		public void keyReleased(KeyEvent k) {
+			switch(k.getKeyCode()) {
+			case KeyEvent.VK_CONTROL:
+				controlPressed = false;
+				
+			case 'R':
+				RPressed = false;
+			}
+		}
+		@Override
+		public void keyTyped(KeyEvent k) {
+			if(controlPressed == true && RPressed == true) {
+				System.out.println("Ctrl + R");
+			}
+			
+		}
 		
 		public void focusGained(FocusEvent f) {
 			if(f.getSource() == ew) {
@@ -168,58 +176,37 @@ public class TermProject extends JFrame {
 						if(ret != JFileChooser.APPROVE_OPTION) {
 							JOptionPane.showMessageDialog(null, "파일은 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
 						}
-						else {
-							fileName = chooser.getSelectedFile().getAbsolutePath();
-							File javaFile = new File(fileName);
-							BufferedReader br = new BufferedReader(new FileReader(javaFile));
-							ew.read(br, javaFile);
-							if(fileName != null) {
-								compileDisable = 0;
-							}
-							br.close();
-							return;
+						fileName = chooser.getSelectedFile().getAbsolutePath();
+						File javaFile = new File(fileName);
+						BufferedReader br = new BufferedReader(new FileReader(javaFile));
+						ew.read(br, javaFile);
+						addTabbedPane(chooser.getSelectedFile().getName());
+						if(fileName != null) {
+							compileDisable = 0;
 						}
+						br.close();
 					} catch(IOException err) {
 						String er = err.getMessage();
 						ew.append(er);
 						break;
 					}
+					return;
 					
 				case "Close":
-					fileName = null;
-					ew.setText("");
-					compileDisable = 1;
-					return;
 					//Close Function
 					
 				case "Save":
-					save();
-					return;
 					//Save Function
 					
 				case "Save As":
-					saveAs();
-					return;
 					//Save As Function
 					
 				case "Quit":
-					int quitIDE = JOptionPane.showConfirmDialog(null, "Java IDE를 종료합니까?",
-				"Are you sure?", JOptionPane.YES_NO_OPTION);
-					if(quitIDE == JOptionPane.YES_OPTION) {
-						E_file.delete();
-						System.exit(0);
-					} if(quitIDE == JOptionPane.NO_OPTION) {
-						return;
-					} if(quitIDE != JOptionPane.YES_NO_OPTION) {
-						return;
-					}
+					E_file.delete();
+					System.exit(0);
 					//Quit Function
-					
 				case "Compile":
 					String s = null;
-					if(E_file.exists()) {
-						E_file.delete();
-					}
 					if(compileDisable != 1) {
 						try {
 							Process oProcess = new ProcessBuilder("javac", fileName).start();
@@ -242,93 +229,7 @@ public class TermProject extends JFrame {
 			}
 		
 		}
-
-		public void keyPressed(KeyEvent k) {
-			switch(k.getKeyCode()) {
-				case KeyEvent.VK_CONTROL:
-					controlPressed = true;
-					return;
-				case 'R':
-					RPressed = true;
-					return;
-				case 'S':
-					SPressed = true;
-					return;
-				case KeyEvent.VK_SHIFT:
-					shiftPressed = true;
-					return;
-			}
-			
-		}
-		public void keyReleased(KeyEvent k) {
-			switch(k.getKeyCode()) {
-			case KeyEvent.VK_CONTROL:
-				controlPressed = false;
-				
-			case 'R':
-				RPressed = false;
-				
-			case 'S':
-				SPressed = false;
-				
-			case KeyEvent.VK_SHIFT:
-				shiftPressed = false;
-				
-			}
-		}
-		public void keyTyped(KeyEvent k) {
-			if(controlPressed == true && RPressed == true && !E_file.exists() && fileName != null) {
-				File runJavaFile = new File(fileName);
-				String fileParent = runJavaFile.getParent();
-				String fileName = runJavaFile.getName();
-				int pos = fileName.lastIndexOf(".");
-				if(pos > 0) {
-					fileName = fileName.substring(0, pos);
-				}
-				try {
-					String s;
-					Process p = new ProcessBuilder("cmd", "/c", "cd", fileParent, "&&", "java", fileName).start();
-					BufferedReader stdOut = new BufferedReader(new InputStreamReader(p.getInputStream()));
-					BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-					while((s = stdOut.readLine()) != null) {
-						ja.append(s);
-						ja.append("\n");
-					}
-					while((s = stdError.readLine()) != null) {
-						ja.append(s);
-						ja.append("\n");
-					}
-				} catch(IOException re) {
-					ja.append("ERROR");
-					System.out.println(re);
-				}
-			}
-			else if(controlPressed == true && RPressed == true && E_file.exists()) {
-				try {
-					FileReader reader = null;
-					BufferedReader br = new BufferedReader(new FileReader(E_file));
-					reader = new FileReader(E_file);
-					ja.read(br, E_file);
-					ja.append("\n");
-					reader.close();
-					br.close();
-				} catch(IOException e) {
-					ja.append("error");
-				}
-			}
-			else if(controlPressed == true && RPressed == true) {
-				ja.append("파일을 업로드해주세요.\n");
-			}
-			else if(controlPressed == true && SPressed == true && shiftPressed == false) {
-				save();
-			}
-			else if(controlPressed == true && shiftPressed == true && SPressed == true) {
-				saveAs();
-				shiftPressed = false;
-			}
-		}
 	}
-	
 	
 	public static void main(String[] args) {
 		new TermProject();
