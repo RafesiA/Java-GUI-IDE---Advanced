@@ -42,6 +42,8 @@ public class TermProject extends JFrame {
 					ja.append(st);
 					ja.append("\n");
 				}
+				stdOut.close();
+				stdError.close();
 			} catch(IOException re) {
 				ja.append("ERROR");
 				System.out.println(re);
@@ -67,6 +69,7 @@ public class TermProject extends JFrame {
 					fw.flush();
 					fw.close();
 				}
+				stdError.close();
 			} catch(IOException e1) {
 				System.out.println(e1);
 			}
@@ -140,9 +143,13 @@ public class TermProject extends JFrame {
 			JOptionPane.showMessageDialog(null, "컴파일 실패", "Compile Error",
 		JOptionPane.WARNING_MESSAGE);
 			try {
+				FileReader reader = null;
+				int c;
 				BufferedReader br = new BufferedReader(new FileReader(E_file));
+				reader = new FileReader(E_file);
 				ja.read(br, E_file);
 				ja.append("\n");
+				reader.close();
 				br.close();
 			} catch(IOException e) {
 				ew.append("Message Error");
@@ -220,6 +227,7 @@ public class TermProject extends JFrame {
 		setResizable(false);
 		addTabbedPane("Default Tab","");
 		add(b,BorderLayout.SOUTH);
+		setTitle("Java IDE");
 	}
 	
 	private void createMenu() {
@@ -294,7 +302,12 @@ public class TermProject extends JFrame {
 					}
 					
 				case "Close":
-					pane.removeTabAt(index);
+					if(index != 0) {
+						pane.removeTabAt(index);
+					}
+					else {
+						ja.append("Default Tab은 닫을 수 없습니다");
+					}
 					return;
 					//Close Function
 					
@@ -312,7 +325,9 @@ public class TermProject extends JFrame {
 					int quitIDE = JOptionPane.showConfirmDialog(null, "Java IDE를 종료합니까?",
 				"Are you sure?", JOptionPane.YES_NO_OPTION);
 					if(quitIDE == JOptionPane.YES_OPTION) {
-						E_file.delete();
+						if(E_file.exists()) {
+							E_file.delete();
+						}
 						System.exit(0);
 					} if(quitIDE == JOptionPane.NO_OPTION) {
 						return;
@@ -362,6 +377,9 @@ public class TermProject extends JFrame {
 		}
 		public void keyTyped(KeyEvent k) {
 			if(controlPressed == true && RPressed == true && shiftPressed != true) {
+				if(E_file.exists()) {
+					E_file.delete();
+				}
 				compile();
 				controlPressed = false;
 				RPressed = false;
