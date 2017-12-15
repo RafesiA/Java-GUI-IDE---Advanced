@@ -50,7 +50,7 @@ public class TermProject extends JFrame {
 			}
 			try {
 				ew.write(new OutputStreamWriter(new FileOutputStream(file),
-			"utf-8"));
+			"euc-kr"));
 				
 			} catch(IOException we) {
 				String we_error = we.getMessage();
