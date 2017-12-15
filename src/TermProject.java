@@ -15,6 +15,7 @@ public class TermProject extends JFrame {
 	JTabbedPane pane;
 	JTextArea ew;
 	JTextArea ja;
+	static int index;
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	static int compileDisable = 1;
 
@@ -250,22 +251,14 @@ public class TermProject extends JFrame {
 		public void stateChanged(ChangeEvent c) {
 			MyActionListener listener = new MyActionListener();
 			JTabbedPane sourceTabbedPane = (JTabbedPane)c.getSource();
-			int index = sourceTabbedPane.getSelectedIndex();
-			System.out.println("Tab changed to: " + sourceTabbedPane.getTitleAt(index));
-			sourceTabbedPane.getFocusListeners();
+			index = sourceTabbedPane.getSelectedIndex();
 			fileName = sourceTabbedPane.getTitleAt(index);
 		}
 		
 		
 		public void focusGained(FocusEvent f) {
-			if(f.getSource() == ew) {
-				System.out.printf("Focus gained\n", f);
-			}
 		}
 		public void focusLost(FocusEvent f)	{
-			if(f.getSource() == ew) {
-				System.out.printf("Focus lost\n", f);
-			}
 		}
 		
 		public MyActionListener(){
@@ -301,9 +294,7 @@ public class TermProject extends JFrame {
 					}
 					
 				case "Close":
-					fileName = null;
-					ew.setText("");
-					compileDisable = 1;
+					pane.removeTabAt(index);
 					return;
 					//Close Function
 					
