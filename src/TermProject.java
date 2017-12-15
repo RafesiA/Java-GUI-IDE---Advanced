@@ -2,9 +2,6 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 import javax.swing.filechooser.*;
-
-import Tab.MyPanel;
-
 import java.util.*;
 import java.io.*;
 
@@ -13,6 +10,8 @@ public class TermProject extends JFrame {
 	JButton btn = new JButton("Add Tab Test");
 	Container cp;
 	JTabbedPane pane;
+	JTextArea ew;
+	JTextArea ja;
 
 	
 	
@@ -21,7 +20,7 @@ public class TermProject extends JFrame {
 			setVisible(true);
 			setSize(600,250);
 			setLayout(new BorderLayout());
-			JTextArea ew = new JTextArea(15,40);
+			ew = new JTextArea(15,40);
 			add(ew, BorderLayout.CENTER);
 			add(new JScrollPane(ew));
 			setBackground(Color.YELLOW);
@@ -32,7 +31,7 @@ public class TermProject extends JFrame {
 			setVisible(true);
 			setSize(600,250);
 			setLayout(new BorderLayout());
-			JTextArea ja = new JTextArea(10,40);
+			ja = new JTextArea(10,40);
 			add(ja, BorderLayout.CENTER);
 			add(new JScrollPane(ja));
 			setBackground(Color.LIGHT_GRAY);
