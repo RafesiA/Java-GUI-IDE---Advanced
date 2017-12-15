@@ -102,12 +102,10 @@ public class TermProject extends JFrame {
 	class MPanel extends JPanel{
 		public MPanel() {
 			setVisible(true);
-			setSize(600,500);
+			setSize(600,250);
 			setLayout(new BorderLayout());
 			NPanel n = new NPanel();
-			BPanel b = new BPanel();
-			add(n,BorderLayout.NORTH);
-			add(b,BorderLayout.CENTER);
+			add(n,BorderLayout.CENTER);
 			
 		}
 		
@@ -126,6 +124,7 @@ public class TermProject extends JFrame {
 
 	
 	public TermProject() {
+		BPanel b = new BPanel();
 		setLayout(new BorderLayout());
 		cp = getContentPane();
 		JTabbedPane pane = createTabbedPane();
@@ -135,6 +134,8 @@ public class TermProject extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		createMenu();
 		setResizable(false);
+		addTabbedPane("Default Tab");
+		add(b,BorderLayout.SOUTH);
 	}
 	
 	private void createMenu() {
