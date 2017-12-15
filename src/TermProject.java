@@ -370,27 +370,16 @@ public class TermProject extends JFrame {
 			}
 		}
 		public void keyTyped(KeyEvent k) {
-			if(controlPressed == true && RPressed == true) {
+			if(controlPressed == true && RPressed == true && shiftPressed != true) {
 				compile();
+				controlPressed = false;
+				RPressed = false;
+				shiftPressed = false;
 			}
 			
-			if(controlPressed == true && RPressed == true && shiftPressed == true && !E_file.exists() && fileName != null) {
+			else if(controlPressed == true && shiftPressed == true && RPressed == true && !E_file.exists() && fileName != null) {
 				run();
 				shiftPressed = false;
-				
-			}
-			else if(controlPressed == true && RPressed == true && E_file.exists()) {
-				try {
-					FileReader reader = null;
-					BufferedReader br = new BufferedReader(new FileReader(E_file));
-					reader = new FileReader(E_file);
-					ja.read(br, E_file);
-					ja.append("\n");
-					reader.close();
-					br.close();
-				} catch(IOException e) {
-					ja.append("error");
-				}
 			}
 			else if(controlPressed == true && RPressed == true && fileName == null) {
 				ja.append("파일을 업로드해주세요.\n");
