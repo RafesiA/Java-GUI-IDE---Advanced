@@ -198,9 +198,9 @@ public class TermProject extends JFrame {
 		pane = new JTabbedPane(JTabbedPane.TOP);
 		return pane;
 	}
-	JTabbedPane addTabbedPane(String str) {
+	JTabbedPane addTabbedPane(String str,String str2) {
 		MyActionListener listener = new MyActionListener();
-		pane.addTab(str, new MPanel());
+		pane.addTab(str, null, new MPanel(), str2);
 		repaint();
 		pane.addChangeListener(listener);
 		return pane;
@@ -218,7 +218,7 @@ public class TermProject extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		createMenu();
 		setResizable(false);
-		addTabbedPane("Default Tab");
+		addTabbedPane("Default Tab","");
 		add(b,BorderLayout.SOUTH);
 	}
 	
@@ -252,7 +252,7 @@ public class TermProject extends JFrame {
 			MyActionListener listener = new MyActionListener();
 			JTabbedPane sourceTabbedPane = (JTabbedPane)c.getSource();
 			index = sourceTabbedPane.getSelectedIndex();
-			fileName = sourceTabbedPane.getTitleAt(index);
+			fileName = sourceTabbedPane.getToolTipTextAt(index);
 		}
 		
 		
@@ -279,7 +279,7 @@ public class TermProject extends JFrame {
 						else {
 							fileName = chooser.getSelectedFile().getAbsolutePath();
 							File javaFile = new File(fileName);
-							addTabbedPane(chooser.getSelectedFile().getPath());
+							addTabbedPane(chooser.getSelectedFile().getName(),chooser.getSelectedFile().getPath());
 							BufferedReader br = new BufferedReader(new FileReader(javaFile));
 							ew.read(br, javaFile);
 							if(fileName != null) {
