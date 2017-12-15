@@ -170,6 +170,7 @@ public class TermProject extends JFrame {
 			int index = sourceTabbedPane.getSelectedIndex();
 			System.out.println("Tab changed to: " + sourceTabbedPane.getTitleAt(index));
 			sourceTabbedPane.getFocusListeners();
+			fileName = sourceTabbedPane.getTitleAt(index);
 		}
 		
 		
@@ -202,7 +203,7 @@ public class TermProject extends JFrame {
 						else {
 							fileName = chooser.getSelectedFile().getAbsolutePath();
 							File javaFile = new File(fileName);
-							addTabbedPane(chooser.getSelectedFile().getName());
+							addTabbedPane(chooser.getSelectedFile().getPath());
 							BufferedReader br = new BufferedReader(new FileReader(javaFile));
 							ew.read(br, javaFile);
 							if(fileName != null) {
