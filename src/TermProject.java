@@ -17,15 +17,80 @@ public class TermProject extends JFrame {
 	JTextArea ja;
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	static int compileDisable = 1;
+
+	
+	void run() {
+		if(!E_file.exists()) {
+			File runJavaFile = new File(fileName);
+			String fileParent = runJavaFile.getParent();
+			String fileName = runJavaFile.getName();
+			int pos = fileName.lastIndexOf(".");
+			if(pos > 0) {
+				fileName = fileName.substring(0, pos);
+			}
+			try {
+				String st;
+				Process p = new ProcessBuilder("cmd", "/c", "cd", fileParent, "&&", "java", fileName).start();
+				BufferedReader stdOut = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+				while((st = stdOut.readLine()) != null) {
+					ja.append(st);
+					ja.append("\n");
+				}
+				while((st = stdError.readLine()) != null) {
+					ja.append(st);
+					ja.append("\n");
+				}
+			} catch(IOException re) {
+				ja.append("ERROR");
+				System.out.println(re);
+			}
+		}
+	}
+	
+	
+	void compile() {
+		String s = null;
+		if(E_file.exists()) {
+			E_file.delete();
+		}
+		if(compileDisable != 1) {
+			try {
+				Process oProcess = new ProcessBuilder("javac", fileName).start();
+				BufferedReader stdError = new BufferedReader(new InputStreamReader
+			(oProcess.getErrorStream()));
+				while ((s = stdError.readLine()) != null) {
+					BufferedWriter fw = new BufferedWriter(new FileWriter(E_file, true));
+					fw.write(s);
+					fw.write(LINE_SEPARATOR);
+					fw.flush();
+					fw.close();
+				}
+			} catch(IOException e1) {
+				System.out.println(e1);
+			}
+			compileMessage();
+		} else {
+			JOptionPane.showMessageDialog(null, "파일은 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
+		}
+		
+		run();
+		
+		
+	}
 	
 
 	void save() {
 		if(fileName != null) {
+			int saveConfirm = JOptionPane.showConfirmDialog(null, "저장하시겠습니까?", "Overwrite?",
+		JOptionPane.YES_NO_OPTION);
+			if(saveConfirm == JOptionPane.YES_OPTION) {
 			try {
 				String overWrite = ew.getText();
 				PrintWriter pw = new PrintWriter(new File(fileName));
 				pw.print(overWrite);
 				pw.close();
+				JOptionPane.showMessageDialog(null, "저장했습니다.", "Saved!", JOptionPane.PLAIN_MESSAGE);
 				ja.append("over write complete\n");
 				return;
 			} catch(IOException save) {
@@ -34,7 +99,16 @@ public class TermProject extends JFrame {
 				ja.append(saveError);
 				return;
 			}
-		} else {
+		}
+			else if(saveConfirm == JOptionPane.NO_OPTION) {
+				return;
+			}
+			else if(saveConfirm != JOptionPane.YES_NO_OPTION) {
+				return;
+			}
+				
+			}
+		else {
 			ja.append("fileName is null\n");
 		}
 	}
@@ -62,12 +136,21 @@ public class TermProject extends JFrame {
 	}
 	void compileMessage() {
 		if(E_file.exists()) {
-			JOptionPane.showMessageDialog(null, "컴파일 오류", "Compile Error",
+			JOptionPane.showMessageDialog(null, "컴파일 실패", "Compile Error",
 		JOptionPane.WARNING_MESSAGE);
-		}
+			try {
+				BufferedReader br = new BufferedReader(new FileReader(E_file));
+				ja.read(br, E_file);
+				ja.append("\n");
+				br.close();
+			} catch(IOException e) {
+				ew.append("Message Error");
+				}
+			}
 		else {
-			JOptionPane.showMessageDialog(null, "컴파일 완료", "Compile Successful",
-		JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, "컴파일 성공", "Compile Successful",
+					JOptionPane.INFORMATION_MESSAGE);
+			ja.append("컴파일 완료\n");
 		}
 	}
 	
@@ -248,29 +331,7 @@ public class TermProject extends JFrame {
 					//Quit Function
 					
 				case "Compile":
-					String s = null;
-					if(E_file.exists()) {
-						E_file.delete();
-					}
-					if(compileDisable != 1) {
-						try {
-							Process oProcess = new ProcessBuilder("javac", fileName).start();
-							BufferedReader stdError = new BufferedReader(new InputStreamReader
-						(oProcess.getErrorStream()));
-							while ((s = stdError.readLine()) != null) {
-								BufferedWriter fw = new BufferedWriter(new FileWriter(E_file, true));
-								fw.write(s);
-								fw.write(LINE_SEPARATOR);
-								fw.flush();
-								fw.close();
-							}
-						} catch(IOException e1) {
-							System.out.println(e1);
-						}
-						compileMessage();
-					} else {
-						JOptionPane.showMessageDialog(null, "파일은 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
-					}
+					compile();
 			}
 		
 		}
@@ -309,31 +370,13 @@ public class TermProject extends JFrame {
 			}
 		}
 		public void keyTyped(KeyEvent k) {
-			if(controlPressed == true && RPressed == true && !E_file.exists() && fileName != null) {
-				File runJavaFile = new File(fileName);
-				String fileParent = runJavaFile.getParent();
-				String fileName = runJavaFile.getName();
-				int pos = fileName.lastIndexOf(".");
-				if(pos > 0) {
-					fileName = fileName.substring(0, pos);
-				}
-				try {
-					String s;
-					Process p = new ProcessBuilder("cmd", "/c", "cd", fileParent, "&&", "java", fileName).start();
-					BufferedReader stdOut = new BufferedReader(new InputStreamReader(p.getInputStream()));
-					BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-					while((s = stdOut.readLine()) != null) {
-						ja.append(s);
-						ja.append("\n");
-					}
-					while((s = stdError.readLine()) != null) {
-						ja.append(s);
-						ja.append("\n");
-					}
-				} catch(IOException re) {
-					ja.append("ERROR");
-					System.out.println(re);
-				}
+			if(controlPressed == true && RPressed == true) {
+				compile();
+			}
+			
+			if(controlPressed == true && RPressed == true && shiftPressed == true && !E_file.exists() && fileName != null) {
+				run();
+				shiftPressed = false;
 				
 			}
 			else if(controlPressed == true && RPressed == true && E_file.exists()) {
@@ -349,11 +392,13 @@ public class TermProject extends JFrame {
 					ja.append("error");
 				}
 			}
-			else if(controlPressed == true && RPressed == true) {
+			else if(controlPressed == true && RPressed == true && fileName == null) {
 				ja.append("파일을 업로드해주세요.\n");
 			}
 			else if(controlPressed == true && SPressed == true && shiftPressed == false) {
 				save();
+				controlPressed = false;
+				SPressed = false;
 			}
 			else if(controlPressed == true && shiftPressed == true && SPressed == true) {
 				saveAs();
