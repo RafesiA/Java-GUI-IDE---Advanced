@@ -122,9 +122,10 @@ public class TermProject extends JFrame {
 			File file = fileChooser.getSelectedFile();
 			if(!file.getName().toLowerCase().endsWith(".java")) {
 				file = new File(file.getParentFile(), file.getName() + ".java");
-			} else {
-				JOptionPane.showMessageDialog(null, "이미 파일이 존재합니다.", "Warning", JOptionPane.WARNING_MESSAGE);
-			}
+				if(file.exists()) {
+					JOptionPane.showMessageDialog(null, "파일이 이미 존재합니다.", "Warning", JOptionPane.WARNING_MESSAGE);
+				}
+			} 
 			try {
 				ew.write(new OutputStreamWriter(new FileOutputStream(file),
 			"euc-kr"));
