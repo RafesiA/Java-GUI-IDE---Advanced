@@ -113,7 +113,8 @@ public class TermProject extends JFrame {
 				
 			}
 		else {
-			ja.append("fileName is null\n");
+			ja.append("다른 이름으로 파일을 저장합니다.\n");
+			saveAs();
 		}
 	}
 	void saveAs() {
@@ -283,6 +284,7 @@ public class TermProject extends JFrame {
 						int ret = chooser.showOpenDialog(null);
 						if(ret != JFileChooser.APPROVE_OPTION) {
 							JOptionPane.showMessageDialog(null, "파일은 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
+							return;
 						}
 						else {
 							fileName = chooser.getSelectedFile().getAbsolutePath();
@@ -298,7 +300,6 @@ public class TermProject extends JFrame {
 						} catch(IOException err) {
 						String er = err.getMessage();
 						ew.append(er);
-						break;
 					}
 					
 				case "Close":
@@ -306,7 +307,7 @@ public class TermProject extends JFrame {
 						pane.removeTabAt(index);
 					}
 					else {
-						ja.append("Default Tab은 닫을 수 없습니다");
+						ja.append("Default Tab은 닫을 수 없습니다\n");
 					}
 					return;
 					//Close Function
