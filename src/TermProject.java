@@ -1,7 +1,6 @@
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import java.awt.event.*;
 import java.awt.*;
 import javax.swing.filechooser.*;
@@ -76,11 +75,10 @@ public class TermProject extends JFrame {
 			compileMessage();
 		} else {
 			JOptionPane.showMessageDialog(null, "파일은 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
+			return;
 		}
 		
 		run();
-		
-		
 	}
 	
 
@@ -134,7 +132,6 @@ public class TermProject extends JFrame {
 			} catch(IOException we) {
 				String we_error = we.getMessage();
 				ja.append(we_error);
-				
 			}
 		}
 		
@@ -144,13 +141,9 @@ public class TermProject extends JFrame {
 			JOptionPane.showMessageDialog(null, "컴파일 실패", "Compile Error",
 		JOptionPane.WARNING_MESSAGE);
 			try {
-				FileReader reader = null;
-				int c;
 				BufferedReader br = new BufferedReader(new FileReader(E_file));
-				reader = new FileReader(E_file);
 				ja.read(br, E_file);
 				ja.append("\n");
-				reader.close();
 				br.close();
 			} catch(IOException e) {
 				ew.append("Message Error");
