@@ -141,8 +141,6 @@ public class TermProject extends JFrame {
 						ew.write(new OutputStreamWriter(new FileOutputStream(file),
 					"euc-kr"));
 						compileDisable = 0;
-						fileName = file.getAbsolutePath();
-						pane.setTitleAt(0, fileName);
 						return;
 					} catch(IOException we) {
 						String we_error = we.getMessage();
