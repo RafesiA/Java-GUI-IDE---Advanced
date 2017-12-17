@@ -84,7 +84,8 @@ public class TermProject extends JFrame {
 	
 
 	void save() {
-		if(fileName != null) {
+		String gibon = pane.getTitleAt(0);
+		if(fileName != null && fileName != gibon) {
 			int saveConfirm = JOptionPane.showConfirmDialog(null, "저장하시겠습니까?", "Overwrite?",
 		JOptionPane.YES_NO_OPTION);
 			if(saveConfirm == JOptionPane.YES_OPTION) {
@@ -111,7 +112,7 @@ public class TermProject extends JFrame {
 			}
 				
 			}
-		else if(fileName == null) {
+		else if(fileName == null || fileName == gibon) {
 			ja.append("다른 이름으로 파일을 저장합니다.\n");
 			saveAs();
 		}
@@ -298,7 +299,6 @@ public class TermProject extends JFrame {
 			JTabbedPane sourceTabbedPane = (JTabbedPane)c.getSource();
 			index = sourceTabbedPane.getSelectedIndex();
 			fileName = sourceTabbedPane.getToolTipTextAt(index);
-			System.out.println(fileName);
 			if(index == 0) {
 				fileName = sourceTabbedPane.getTitleAt(0);
 			}
