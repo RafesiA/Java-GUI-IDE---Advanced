@@ -93,10 +93,10 @@ public class TermProject extends JFrame {
 				pw.print(overWrite);
 				pw.close();
 				JOptionPane.showMessageDialog(null, "저장했습니다.", "Saved!", JOptionPane.PLAIN_MESSAGE);
-				ja.append("over write complete\n" + overWrite);
+				ja.append("over write complete\n");
 				return;
 			} catch(IOException save) {
-				ja.append("Oveer Writing Error");
+				ja.append("Over Writing Error");
 				String saveError = save.getMessage();
 				ja.append(saveError);
 				return;
@@ -149,7 +149,6 @@ public class TermProject extends JFrame {
 							PrintWriter pw = new PrintWriter(new File(saveAsPath));
 							pw.print(saveAsFile);
 							pw.close();
-							System.out.println(saveAsFile);
 							return;
 						} catch(IOException we) {
 							String we_error = we.getMessage();
@@ -193,6 +192,7 @@ public class TermProject extends JFrame {
 			add(ew, BorderLayout.CENTER);
 			add(new JScrollPane(ew));
 			setBackground(Color.YELLOW);
+			ew.requestFocusInWindow();
 			ew.setRequestFocusEnabled(true);
 			ew.addFocusListener(listener);
 			ew.addKeyListener(listener);
@@ -212,11 +212,13 @@ public class TermProject extends JFrame {
 	}
 	class MPanel extends JPanel{
 		public MPanel() {
+			MyActionListener listener = new MyActionListener();
 			setVisible(true);
 			setSize(600,250);
 			setLayout(new BorderLayout());
 			NPanel n = new NPanel();
 			add(n,BorderLayout.CENTER);
+			n.addFocusListener(listener);
 			
 		}
 		
@@ -277,15 +279,17 @@ public class TermProject extends JFrame {
 		boolean controlPressed, RPressed, SPressed, shiftPressed;
 	
 		public void stateChanged(ChangeEvent c) {
-			MyActionListener listener = new MyActionListener();
 			JTabbedPane sourceTabbedPane = (JTabbedPane)c.getSource();
 			index = sourceTabbedPane.getSelectedIndex();
 			fileName = sourceTabbedPane.getToolTipTextAt(index);
-			System.out.println(fileName);
 		}
 		
 		
 		public void focusGained(FocusEvent f) {
+			if(f.getSource() instanceof JTextArea) {
+				ew = (JTextArea)f.getSource();
+			}
+			
 		}
 		public void focusLost(FocusEvent f)	{
 		}
