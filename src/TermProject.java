@@ -299,9 +299,6 @@ public class TermProject extends JFrame {
 			JTabbedPane sourceTabbedPane = (JTabbedPane)c.getSource();
 			index = sourceTabbedPane.getSelectedIndex();
 			fileName = sourceTabbedPane.getToolTipTextAt(index);
-			if(index == 0) {
-				fileName = sourceTabbedPane.getTitleAt(0);
-			}
 		}
 		
 		
