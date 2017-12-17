@@ -136,20 +136,6 @@ public class TermProject extends JFrame {
 						return;
 					}
 				}
-				else if(fileName == null) {
-					try {
-						ew.write(new OutputStreamWriter(new FileOutputStream(file),
-					"euc-kr"));
-						compileDisable = 0;
-						fileName = file.getAbsolutePath();
-						pane.setTitleAt(0, fileName);
-						return;
-					} catch(IOException we) {
-						String we_error = we.getMessage();
-						ja.append(we_error);
-						return;
-					}
-				}
 				else if(file.exists() && fileName != null) {
 					JOptionPane.showMessageDialog(null, "파일이 이미 존재합니다.", "Warning", JOptionPane.WARNING_MESSAGE);
 					int saveAsE = JOptionPane.showConfirmDialog(null, "덮어쓰시겠습니까?", "Overwrite?", JOptionPane.YES_NO_OPTION);
