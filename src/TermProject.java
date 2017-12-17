@@ -52,11 +52,12 @@ public class TermProject extends JFrame {
 	
 	
 	void compile() {
+		System.out.println(fileName);
 		String s = null;
 		if(E_file.exists()) {
 			E_file.delete();
 		}
-		if(compileDisable != 1) {
+		if(compileDisable != 1 && fileName != null) {
 			try {
 				Process oProcess = new ProcessBuilder("javac", fileName).start();
 				BufferedReader stdError = new BufferedReader(new InputStreamReader
@@ -73,7 +74,7 @@ public class TermProject extends JFrame {
 				System.out.println(e1);
 			}
 			compileMessage();
-		} else {
+		} else if(fileName == null) {
 			JOptionPane.showMessageDialog(null, "파일을 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
@@ -110,7 +111,7 @@ public class TermProject extends JFrame {
 			}
 				
 			}
-		else {
+		else if(fileName == null) {
 			ja.append("다른 이름으로 파일을 저장합니다.\n");
 			saveAs();
 		}
@@ -122,10 +123,11 @@ public class TermProject extends JFrame {
 			File file = fileChooser.getSelectedFile();
 			if(!file.getName().toLowerCase().endsWith(".java")) {
 				file = new File(file.getParentFile(), file.getName() + ".java");
-				if(!file.exists()) {
+				if(!file.exists() && fileName != null) {
 					try {
 						ew.write(new OutputStreamWriter(new FileOutputStream(file),
 					"euc-kr"));
+						compileDisable = 0;
 						return;
 					} catch(IOException we) {
 						String we_error = we.getMessage();
@@ -133,7 +135,21 @@ public class TermProject extends JFrame {
 						return;
 					}
 				}
-				else if(file.exists()) {
+				else if(fileName == null) {
+					try {
+						ew.write(new OutputStreamWriter(new FileOutputStream(file),
+					"euc-kr"));
+						compileDisable = 0;
+						fileName = file.getAbsolutePath();
+						pane.setTitleAt(0, fileName);
+						return;
+					} catch(IOException we) {
+						String we_error = we.getMessage();
+						ja.append(we_error);
+						return;
+					}
+				}
+				else if(file.exists() && fileName != null) {
 					JOptionPane.showMessageDialog(null, "파일이 이미 존재합니다.", "Warning", JOptionPane.WARNING_MESSAGE);
 					int saveAsE = JOptionPane.showConfirmDialog(null, "덮어쓰시겠습니까?", "Overwrite?", JOptionPane.YES_NO_OPTION);
 					if(saveAsE != JOptionPane.YES_NO_OPTION) {
@@ -282,6 +298,10 @@ public class TermProject extends JFrame {
 			JTabbedPane sourceTabbedPane = (JTabbedPane)c.getSource();
 			index = sourceTabbedPane.getSelectedIndex();
 			fileName = sourceTabbedPane.getToolTipTextAt(index);
+			System.out.println(fileName);
+			if(index == 0) {
+				fileName = sourceTabbedPane.getTitleAt(0);
+			}
 		}
 		
 		
