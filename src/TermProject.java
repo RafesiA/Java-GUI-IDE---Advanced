@@ -124,12 +124,8 @@ public class TermProject extends JFrame {
 				file = new File(file.getParentFile(), file.getName() + ".java");
 				if(!file.exists()) {
 					try {
-						String saveAsFile = ew.getText();
-						String saveAsPath = file.getAbsolutePath();
-						PrintWriter pw = new PrintWriter(new File(saveAsPath));
-						pw.print(saveAsFile);
-						pw.close();
-						System.out.println(saveAsFile);
+						ew.write(new OutputStreamWriter(new FileOutputStream(file),
+					"euc-kr"));
 						return;
 					} catch(IOException we) {
 						String we_error = we.getMessage();
@@ -148,8 +144,12 @@ public class TermProject extends JFrame {
 					}
 					if(saveAsE == JOptionPane.YES_OPTION) {
 						try {
-							ew.write(new OutputStreamWriter(new FileOutputStream(file),
-						"euc-kr"));
+							String saveAsFile = ew.getText();
+							String saveAsPath = file.getAbsolutePath();
+							PrintWriter pw = new PrintWriter(new File(saveAsPath));
+							pw.print(saveAsFile);
+							pw.close();
+							System.out.println(saveAsFile);
 							return;
 						} catch(IOException we) {
 							String we_error = we.getMessage();
