@@ -74,7 +74,7 @@ public class TermProject extends JFrame {
 			}
 			compileMessage();
 		} else {
-			JOptionPane.showMessageDialog(null, "파일은 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, "파일을 선택하지 않았습니다.", "Warning", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		
@@ -124,6 +124,11 @@ public class TermProject extends JFrame {
 				file = new File(file.getParentFile(), file.getName() + ".java");
 				if(!file.exists()) {
 					try {
+						String saveAsFile = ew.getText();
+						String saveAsPath = file.getAbsolutePath();
+						PrintWriter pw = new PrintWriter(new File(saveAsPath));
+						pw.print(saveAsFile);
+						pw.close();
 						ew.write(new OutputStreamWriter(new FileOutputStream(file),
 					"euc-kr"));
 					} catch(IOException we) {
