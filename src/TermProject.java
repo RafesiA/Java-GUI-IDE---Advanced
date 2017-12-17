@@ -93,7 +93,7 @@ public class TermProject extends JFrame {
 				pw.print(overWrite);
 				pw.close();
 				JOptionPane.showMessageDialog(null, "저장했습니다.", "Saved!", JOptionPane.PLAIN_MESSAGE);
-				ja.append("over write complete\n");
+				ja.append("over write complete\n" + overWrite);
 				return;
 			} catch(IOException save) {
 				ja.append("Oveer Writing Error");
@@ -129,11 +129,12 @@ public class TermProject extends JFrame {
 						PrintWriter pw = new PrintWriter(new File(saveAsPath));
 						pw.print(saveAsFile);
 						pw.close();
-						ew.write(new OutputStreamWriter(new FileOutputStream(file),
-					"euc-kr"));
+						System.out.println(saveAsFile);
+						return;
 					} catch(IOException we) {
 						String we_error = we.getMessage();
 						ja.append(we_error);
+						return;
 					}
 				}
 				else if(file.exists()) {
@@ -149,9 +150,11 @@ public class TermProject extends JFrame {
 						try {
 							ew.write(new OutputStreamWriter(new FileOutputStream(file),
 						"euc-kr"));
+							return;
 						} catch(IOException we) {
 							String we_error = we.getMessage();
 							ja.append(we_error);
+							return;
 						}
 					}
 				}
@@ -278,6 +281,7 @@ public class TermProject extends JFrame {
 			JTabbedPane sourceTabbedPane = (JTabbedPane)c.getSource();
 			index = sourceTabbedPane.getSelectedIndex();
 			fileName = sourceTabbedPane.getToolTipTextAt(index);
+			System.out.println(fileName);
 		}
 		
 		
