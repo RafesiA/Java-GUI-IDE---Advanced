@@ -89,21 +89,21 @@ public class TermProject extends JFrame {
 			int saveConfirm = JOptionPane.showConfirmDialog(null, "저장하시겠습니까?", "Overwrite?",
 		JOptionPane.YES_NO_OPTION);
 			if(saveConfirm == JOptionPane.YES_OPTION) {
-			try {
-				String overWrite = ew.getText();
-				PrintWriter pw = new PrintWriter(new File(fileName));
-				pw.print(overWrite);
-				pw.close();
-				JOptionPane.showMessageDialog(null, "저장했습니다.", "Saved!", JOptionPane.PLAIN_MESSAGE);
-				ja.append("over write complete\n");
-				return;
-			} catch(IOException save) {
-				ja.append("Over Writing Error");
-				String saveError = save.getMessage();
-				ja.append(saveError);
-				return;
+				try {
+					String overWrite = ew.getText();
+					PrintWriter pw = new PrintWriter(new File(fileName));
+					pw.print(overWrite);
+					pw.close();
+					JOptionPane.showMessageDialog(null, "저장했습니다.", "Saved!", JOptionPane.PLAIN_MESSAGE);
+					ja.append("over write complete\n");
+					return;
+				} catch(IOException save) {
+					ja.append("Over Writing Error\n");
+					String saveError = save.getMessage();
+					ja.append(saveError);
+					return;
+				}
 			}
-		}
 			else if(saveConfirm == JOptionPane.NO_OPTION) {
 				return;
 			}
@@ -297,6 +297,9 @@ public class TermProject extends JFrame {
 			JTabbedPane sourceTabbedPane = (JTabbedPane)c.getSource();
 			index = sourceTabbedPane.getSelectedIndex();
 			fileName = sourceTabbedPane.getToolTipTextAt(index);
+			if(index == 0) {
+				fileName = sourceTabbedPane.getTitleAt(0);
+			}
 		}
 		
 		
