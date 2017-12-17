@@ -52,7 +52,6 @@ public class TermProject extends JFrame {
 	
 	
 	void compile() {
-		System.out.println(fileName);
 		String s = null;
 		if(E_file.exists()) {
 			E_file.delete();
@@ -432,6 +431,8 @@ public class TermProject extends JFrame {
 			else if(controlPressed == true && shiftPressed == true && RPressed == true && !E_file.exists() && fileName != null) {
 				run();
 				shiftPressed = false;
+				controlPressed = false;
+				RPressed = false;
 			}
 			else if(controlPressed == true && RPressed == true && fileName == null) {
 				ja.append("파일을 업로드해주세요.\n");
@@ -443,7 +444,9 @@ public class TermProject extends JFrame {
 			}
 			else if(controlPressed == true && shiftPressed == true && SPressed == true) {
 				saveAs();
+				SPressed = false;
 				shiftPressed = false;
+				controlPressed = false;
 			}
 		}
 	}
