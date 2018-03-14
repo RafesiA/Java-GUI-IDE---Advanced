@@ -140,6 +140,7 @@ public class TermProject extends JFrame {
 						ew.write(new OutputStreamWriter(new FileOutputStream(file),
 					"euc-kr"));
 						compileDisable = 0;
+						JOptionPane.showMessageDialog(null, "저장 완료", "다른 이름으로 저장하기", JOptionPane.NO_OPTION);
 						return;
 					} catch(IOException we) {
 						String we_error = we.getMessage();
@@ -290,7 +291,7 @@ public class TermProject extends JFrame {
 
 	class MyActionListener implements ActionListener, FocusListener, KeyListener, ChangeListener{
 		private JFileChooser chooser;
-		boolean controlPressed, RPressed, SPressed, shiftPressed;
+		boolean controlPressed, RPressed, SPressed, shiftPressed, WPressed;
 	
 		public void stateChanged(ChangeEvent c) {
 			JTabbedPane sourceTabbedPane = (JTabbedPane)c.getSource();
@@ -398,6 +399,8 @@ public class TermProject extends JFrame {
 				case KeyEvent.VK_SHIFT:
 					shiftPressed = true;
 					return;
+				case 'W':
+					WPressed = true;
 			}
 			
 		}
@@ -414,6 +417,8 @@ public class TermProject extends JFrame {
 				
 			case KeyEvent.VK_SHIFT:
 				shiftPressed = false;
+			case 'W':
+				WPressed = false;
 				
 			}
 		}
@@ -447,6 +452,14 @@ public class TermProject extends JFrame {
 				SPressed = false;
 				shiftPressed = false;
 				controlPressed = false;
+			}
+			else if(controlPressed == true && WPressed == true) {
+				if(index != 0) {
+					pane.removeTabAt(index);
+				}
+				else {
+					ja.append("Default Tab은 닫을 수 없습니다\n");
+				}
 			}
 		}
 	}
