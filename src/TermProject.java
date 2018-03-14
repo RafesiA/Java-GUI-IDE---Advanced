@@ -141,6 +141,7 @@ public class TermProject extends JFrame {
 					"euc-kr"));
 						compileDisable = 0;
 						JOptionPane.showMessageDialog(null, "저장 완료", "다른 이름으로 저장하기", JOptionPane.NO_OPTION);
+						fileName = file.getAbsolutePath();
 						return;
 					} catch(IOException we) {
 						String we_error = we.getMessage();
