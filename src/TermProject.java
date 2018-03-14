@@ -271,8 +271,8 @@ public class TermProject extends JFrame {
 		MyActionListener listener = new MyActionListener();
 		JMenuBar mb = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
-		JMenuItem[] menuItem = new JMenuItem [5];
-		String[] itemTitle = {"Open", "Close", "Save", "Save As", "Quit"};
+		JMenuItem[] menuItem = new JMenuItem[6];
+		String[] itemTitle = {"New File", "Open", "Close", "Save", "Save As", "Quit"};
 		JMenu runMenu = new JMenu("Run");
 		JMenuItem compile = new JMenuItem("Compile");
 		for(int i=0; i<menuItem.length; i++) {
@@ -321,6 +321,10 @@ public class TermProject extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
 			switch(command) {
+				case "New File":
+					addTabbedPane("New Tab", null);
+					return;
+			
 				case "Open":
 					try {
 						int ret = chooser.showOpenDialog(null);
